@@ -1,0 +1,15 @@
+{
+  "name": "Aura H2Go",
+  "short_name": "Aura H2Go",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0077B6",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3105/3105813.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
