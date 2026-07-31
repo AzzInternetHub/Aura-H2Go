@@ -3,36 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura H2Go | Management Portal</title>
+    <title>Aura H2Go | Secure Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-white min-h-screen p-4 flex items-center justify-center">
+<body class="bg-slate-900 text-white min-h-screen p-4 flex items-center justify-center font-sans">
 
-    <div id="login-box" class="w-full max-w-sm p-6 bg-slate-800 rounded-2xl border border-slate-700 space-y-4">
-        <h1 class="text-xl font-bold text-center">Admin Access</h1>
-        <input type="password" id="admin-pass" placeholder="Enter Admin Password" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-center text-sm focus:outline-none">
-        <button onclick="login()" class="w-full py-3 bg-sky-600 rounded-xl font-bold text-sm">Authenticate</button>
+    <!-- LOGIN CONTAINER -->
+    <div id="login-box" class="w-full max-w-sm p-6 bg-slate-800 rounded-3xl border border-slate-700 space-y-4 shadow-2xl">
+        <div class="w-12 h-12 rounded-2xl bg-sky-600 text-white flex items-center justify-center mx-auto text-xl shadow-lg shadow-sky-600/30">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+        <h1 class="text-lg font-bold text-center">Admin Access</h1>
+        <input type="password" id="admin-pass" placeholder="Enter Security Key" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-center text-sm focus:outline-none focus:border-sky-500 transition">
+        <button onclick="login()" class="w-full py-3 bg-sky-600 hover:bg-sky-500 rounded-xl font-bold text-sm transition">Authenticate</button>
     </div>
 
-    <div id="admin-panel" class="hidden w-full max-w-lg p-6 bg-slate-800 rounded-2xl border border-slate-700 space-y-6">
+    <!-- ADMIN PANEL CONTAINER -->
+    <div id="admin-panel" class="hidden w-full max-w-md p-6 bg-slate-800 rounded-3xl border border-slate-700 space-y-6 shadow-2xl">
+        <!-- Header -->
         <div class="flex justify-between items-center border-b border-slate-700 pb-4">
-            <h2 class="font-bold text-lg">System Dashboard</h2>
-            <button onclick="location.reload()" class="text-xs bg-slate-700 px-3 py-1.5 rounded-lg">Lock Session</button>
+            <div>
+                <h2 class="font-bold text-base">Aura H2Go Admin</h2>
+                <p class="text-[10px] text-slate-400">System Controls</p>
+            </div>
+            <button onclick="location.reload()" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-xl font-bold transition">Lock</button>
         </div>
 
-        <div class="space-y-2">
-            <p class="text-xs text-slate-400">Database Connection Status:</p>
-            <div id="status-box" class="p-4 bg-slate-900 rounded-xl text-xs font-mono text-emerald-400">Ready</div>
+        <!-- Connection Status -->
+        <div class="space-y-3">
+            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Database Connection</h3>
+            <div id="connection-status" class="p-4 bg-slate-900 rounded-2xl border border-slate-700 text-xs flex items-center justify-between">
+                <span class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Google Sheet API
+                </span>
+                <span class="text-emerald-400 font-bold font-mono">CONNECTED</span>
+            </div>
         </div>
 
-        <div class="space-y-2">
-            <h3 class="text-sm font-bold">Quick Management Links</h3>
-            <p class="text-xs text-slate-400">To modify rates or manage orders, open your linked Google Sheet backend:</p>
-            <a href="https://sheets.google.com" target="_blank" class="block w-full py-3 bg-slate-700 text-center rounded-xl text-xs font-bold hover:bg-slate-600">Open Google Sheets Backend</a>
+        <!-- Management Actions -->
+        <div class="space-y-3">
+            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Management Actions</h3>
+            <button onclick="clearCache()" class="w-full py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95">
+                <i class="fa-solid fa-rotate"></i> Force Clear Client Caches
+            </button>
+            <p class="text-[10px] text-slate-400">Use this if clients aren't seeing price or image updates immediately.</p>
+        </div>
+
+        <!-- Direct Sheet Access -->
+        <div class="pt-2 border-t border-slate-700">
+            <p class="text-[11px] text-slate-400 mb-2">Access live order records & pricing sheets:</p>
+            <a id="sheet-btn-link" href="#" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 text-center active:scale-95 shadow-lg shadow-emerald-600/20">
+                <i class="fa-solid fa-table"></i> Launch Google Sheets Backend
+            </a>
         </div>
     </div>
 
-    <script src="config.js"></script>
-    <script src="admin.js"></script>
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script>
+        function login() {
+            const input = document.getElementById('admin-pass').value;
+            if (input === CONFIG.ADMIN_PASS) {
+                document.getElementById('login-box').classList.add('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+                
+                // Attach Google Sheet URL directly to the anchor tag
+                const sheetBtn = document.getElementById('sheet-btn-link');
+                if (sheetBtn && CONFIG.SHEET_URL) {
+                    sheetBtn.href = CONFIG.SHEET_URL;
+                }
+            } else {
+                alert('Invalid Key');
+            }
+        }
+
+        function clearCache() {
+            localStorage.removeItem('aura_cached_products');
+            localStorage.removeItem('aura_cached_locations');
+            alert('Client caches cleared successfully!');
+        }
+    </script>
 </body>
 </html>
