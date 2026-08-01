@@ -3,63 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura H2Go | Secure Management</title>
+    <title>Aura H2Go | Admin Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-white min-h-screen p-4 flex items-center justify-center font-sans">
+<body class="bg-slate-900 text-slate-100 min-h-screen p-3 md:p-6 font-sans">
 
     <!-- LOGIN CONTAINER -->
-    <div id="login-box" class="w-full max-w-sm p-6 bg-slate-800 rounded-3xl border border-slate-700 space-y-4 shadow-2xl">
+    <div id="login-box" class="max-w-sm mx-auto mt-20 p-6 bg-slate-800 rounded-3xl border border-slate-700 space-y-4 shadow-2xl">
         <div class="w-12 h-12 rounded-2xl bg-sky-600 text-white flex items-center justify-center mx-auto text-xl shadow-lg shadow-sky-600/30">
-            <i class="fa-solid fa-lock"></i>
+            <i class="fa-solid fa-user-shield"></i>
         </div>
-        <h1 class="text-lg font-bold text-center">Admin Access</h1>
-        <input type="password" id="admin-pass" placeholder="Enter Security Key" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-center text-sm focus:outline-none focus:border-sky-500 transition">
+        <h1 class="text-lg font-bold text-center">Admin Portal</h1>
+        <input type="password" id="admin-pass" placeholder="Enter Security Password" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-center text-sm focus:outline-none focus:border-sky-500 transition">
         <button onclick="login()" class="w-full py-3 bg-sky-600 hover:bg-sky-500 rounded-xl font-bold text-sm transition">Authenticate</button>
     </div>
 
-    <!-- ADMIN PANEL CONTAINER -->
-    <div id="admin-panel" class="hidden w-full max-w-md p-6 bg-slate-800 rounded-3xl border border-slate-700 space-y-6 shadow-2xl">
+    <!-- MAIN ADMIN PANEL -->
+    <div id="admin-panel" class="hidden max-w-4xl mx-auto space-y-6 pb-12">
         <!-- Header -->
-        <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+        <div class="flex justify-between items-center bg-slate-800 p-4 rounded-2xl border border-slate-700">
             <div>
-                <h2 class="font-bold text-base">Aura H2Go Admin</h2>
-                <p class="text-[10px] text-slate-400">System Controls</p>
+                <h2 class="font-bold text-lg text-white">Aura H2Go System Dashboard</h2>
+                <p class="text-xs text-slate-400">Live Management & Operations</p>
             </div>
-            <button onclick="location.reload()" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-xl font-bold transition">Lock</button>
-        </div>
-
-        <!-- Connection Status -->
-        <div class="space-y-3">
-            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Database Connection</h3>
-            <div id="connection-status" class="p-4 bg-slate-900 rounded-2xl border border-slate-700 text-xs flex items-center justify-between">
-                <span class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Google Sheet API
-                </span>
-                <span class="text-emerald-400 font-bold font-mono">CONNECTED</span>
+            <div class="flex gap-2">
+                <button onclick="clearCache()" class="px-3 py-2 bg-amber-600/20 text-amber-400 border border-amber-500/30 rounded-xl text-xs font-bold hover:bg-amber-600/30 transition">
+                    <i class="fa-solid fa-bolt mr-1"></i> Sync & Clear Caches
+                </button>
+                <button onclick="location.reload()" class="px-3 py-2 bg-slate-700 text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-600 transition">Lock</button>
             </div>
         </div>
 
-        <!-- Management Actions -->
-        <div class="space-y-3">
-            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Management Actions</h3>
-            <button onclick="clearCache()" class="w-full py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95">
-                <i class="fa-solid fa-rotate"></i> Force Clear Client Caches
-            </button>
-            <p class="text-[10px] text-slate-400">Use this if clients aren't seeing price or image updates immediately.</p>
+        <!-- System Direct Sheet & Status Link -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 bg-slate-800 rounded-2xl border border-slate-700 flex items-center justify-between">
+                <div>
+                    <span class="text-xs text-slate-400 block">Database API Status</span>
+                    <span class="text-emerald-400 font-bold text-sm flex items-center gap-1.5 mt-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Synchronized
+                    </span>
+                </div>
+                <a id="sheet-btn-link" href="#" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                    <i class="fa-solid fa-file-excel"></i> Open Google Sheet
+                </a>
+            </div>
+
+            <div class="p-4 bg-slate-800 rounded-2xl border border-slate-700 flex items-center justify-between">
+                <div>
+                    <span class="text-xs text-slate-400 block">Active SMS Gateway</span>
+                    <span class="text-sky-400 font-bold text-sm flex items-center gap-1.5 mt-1">
+                        <i class="fa-solid fa-comment-sms"></i> SMS Online Ghana
+                    </span>
+                </div>
+                <span class="text-xs bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 font-mono text-slate-300">Auto-Dispatch Active</span>
+            </div>
         </div>
 
-        <!-- Direct Sheet Access -->
-        <div class="pt-2 border-t border-slate-700">
-            <p class="text-[11px] text-slate-400 mb-2">Access live order records & pricing sheets:</p>
-            <a id="sheet-btn-link" href="#" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 text-center active:scale-95 shadow-lg shadow-emerald-600/20">
-                <i class="fa-solid fa-table"></i> Launch Google Sheets Backend
-            </a>
+        <!-- TAB NAVIGATION -->
+        <div class="flex gap-2 border-b border-slate-700 pb-2">
+            <button onclick="switchTab('orders')" id="tab-orders" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-600 text-white">Live Orders</button>
+            <button onclick="switchTab('products')" id="tab-products" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white">Products Setup</button>
+            <button onclick="switchTab('locations')" id="tab-locations" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white">Delivery Locations</button>
+        </div>
+
+        <!-- ORDERS VIEW PANEL -->
+        <div id="panel-orders" class="space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider">Incoming Campus Orders</h3>
+                <button onclick="fetchOrders()" class="text-xs text-sky-400 font-bold hover:underline"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+            </div>
+            <div id="orders-list" class="space-y-3">
+                <p class="text-xs text-slate-400 text-center py-8 bg-slate-800 rounded-2xl border border-slate-700">Loading incoming orders...</p>
+            </div>
+        </div>
+
+        <!-- PRODUCTS MANAGEMENT PANEL -->
+        <div id="panel-products" class="hidden space-y-4">
+            <div class="p-4 bg-slate-800 rounded-2xl border border-slate-700">
+                <h3 class="text-sm font-bold text-white mb-3">Add / Update Product</h3>
+                <form id="product-form" onsubmit="saveProduct(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" id="prod-name" placeholder="Product Title (e.g. Gallon Water Refill)" required class="px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs">
+                    <input type="number" step="0.01" id="prod-price" placeholder="Price (GHS)" required class="px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs">
+                    <input type="url" id="prod-img" placeholder="Direct Image URL" class="px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs col-span-1 md:col-span-2">
+                    <textarea id="prod-desc" placeholder="Product Details / Specs" class="px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs col-span-1 md:col-span-2 h-20"></textarea>
+                    <button type="submit" class="col-span-1 md:col-span-2 py-3 bg-sky-600 hover:bg-sky-500 rounded-xl text-xs font-bold transition">Save Product</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- LOCATIONS MANAGEMENT PANEL -->
+        <div id="panel-locations" class="hidden space-y-4">
+            <div class="p-4 bg-slate-800 rounded-2xl border border-slate-700">
+                <h3 class="text-sm font-bold text-white mb-3">Add / Update Delivery Hostels & Zones</h3>
+                <form id="location-form" onsubmit="saveLocation(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" id="loc-name" placeholder="Hostel/Campus Zone Name" required class="px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs">
+                    <input type="number" step="0.01" id="loc-fee" placeholder="Delivery Fee (GHS)" required class="px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs">
+                    <button type="submit" class="col-span-1 md:col-span-2 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-bold transition">Save Location</button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- SCRIPTS -->
     <script src="config.js"></script>
     <script>
         function login() {
@@ -68,20 +114,97 @@
                 document.getElementById('login-box').classList.add('hidden');
                 document.getElementById('admin-panel').classList.remove('hidden');
                 
-                // Attach Google Sheet URL directly to the anchor tag
+                // Directly set Sheet URL on anchor element
                 const sheetBtn = document.getElementById('sheet-btn-link');
                 if (sheetBtn && CONFIG.SHEET_URL) {
                     sheetBtn.href = CONFIG.SHEET_URL;
                 }
+                fetchOrders();
             } else {
-                alert('Invalid Key');
+                alert('Invalid Passcode');
             }
         }
 
+        function switchTab(tab) {
+            ['orders', 'products', 'locations'].forEach(t => {
+                document.getElementById(`panel-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white";
+            });
+            document.getElementById(`panel-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).className = "px-4 py-2 rounded-xl text-xs font-bold bg-sky-600 text-white";
+        }
+
         function clearCache() {
-            localStorage.removeItem('aura_cached_products');
-            localStorage.removeItem('aura_cached_locations');
-            alert('Client caches cleared successfully!');
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('App Caches and local sync store cleared!');
+            location.reload();
+        }
+
+        async function fetchOrders() {
+            const container = document.getElementById('orders-list');
+            try {
+                const res = await fetch(`${CONFIG.SCRIPT_URL}?action=getOrders&nocache=${Date.now()}`);
+                const data = await res.json();
+                
+                if(!data.orders || data.orders.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6 bg-slate-800 rounded-2xl border border-slate-700">No registered orders found.</p>`;
+                    return;
+                }
+
+                container.innerHTML = data.orders.reverse().map(o => `
+                    <div class="p-4 bg-slate-800 rounded-2xl border border-slate-700 text-xs space-y-2">
+                        <div class="flex justify-between font-bold text-white border-b border-slate-700 pb-2">
+                            <span>#${o.id || 'ORD'} - ${o.customerName || 'Customer'}</span>
+                            <span class="text-sky-400">GHS ${parseFloat(o.total || 0).toFixed(2)}</span>
+                        </div>
+                        <p class="text-slate-300"><strong>Location:</strong> ${o.location || 'N/A'}</p>
+                        <p class="text-slate-300"><strong>Items:</strong> ${o.items || 'N/A'}</p>
+                        <p class="text-slate-400 text-[11px]"><strong>Contact:</strong> ${o.phone || 'N/A'} | <strong>Payment:</strong> ${o.paymentMethod || 'MoMo/Paystack'}</p>
+                    </div>
+                `).join('');
+            } catch (err) {
+                container.innerHTML = `<p class="text-xs text-rose-400 text-center py-4">Unable to fetch live orders directly. Click "Open Google Sheet" above to view records.</p>`;
+            }
+        }
+
+        async function saveProduct(e) {
+            e.preventDefault();
+            const payload = {
+                action: 'saveProduct',
+                name: document.getElementById('prod-name').value,
+                price: document.getElementById('prod-price').value,
+                image: document.getElementById('prod-img').value,
+                description: document.getElementById('prod-desc').value
+            };
+            await sendToSheet(payload, "Product saved successfully!");
+            document.getElementById('product-form').reset();
+        }
+
+        async function saveLocation(e) {
+            e.preventDefault();
+            const payload = {
+                action: 'saveLocation',
+                name: document.getElementById('loc-name').value,
+                fee: document.getElementById('loc-fee').value
+            };
+            await sendToSheet(payload, "Delivery Location saved!");
+            document.getElementById('location-form').reset();
+        }
+
+        async function sendToSheet(data, successMsg) {
+            try {
+                await fetch(CONFIG.SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                alert(successMsg);
+                localStorage.clear(); // Clear client caches on modifications
+            } catch(e) {
+                alert('Submission error: ' + e.message);
+            }
         }
     </script>
 </body>
