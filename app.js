@@ -88,6 +88,9 @@ function loadAppData() {
         } catch (e) {
             console.error("Cache parsing error:", e);
         }
+    } else {
+        // Render sleek skeleton loader if no offline cache exists yet
+        showLoadingSkeleton();
     }
 
     if (cachedLocations) {
@@ -103,18 +106,18 @@ function loadAppData() {
     const script = document.createElement('script');
     const callbackName = 'auraDataCallback_' + Date.now();
     
-    // Safety network timeout handler (6 seconds)
+    // Generous 15s timeout to handle Apps Script cold starts gracefully
     const fetchTimeout = setTimeout(() => {
         if (!cachedProducts || appProducts.length === 0) {
-            showEmptyProductsState("No products found. Add products in Admin or check backend deployment.");
+            showEmptyProductsState("Water items currently unavailable. Pull down to refresh.");
         }
-    }, 6000);
+    }, 15000);
 
     // Dynamic JSONP window callback function definition
     window[callbackName] = function(data) {
         clearTimeout(fetchTimeout);
         delete window[callbackName];
-        document.body.removeChild(script); // Clean up DOM
+        if (script.parentNode) script.parentNode.removeChild(script); // Clean up DOM
 
         // Process Products
         if (data && data.products && data.products.length > 0) {
@@ -122,7 +125,7 @@ function loadAppData() {
             localStorage.setItem('aura_products', JSON.stringify(appProducts));
             renderProducts(appProducts);
         } else if (!cachedProducts || appProducts.length === 0) {
-            showEmptyProductsState("No water items currently available.");
+            showEmptyProductsState("No products currently available.");
         }
 
         // Process Locations
@@ -138,7 +141,7 @@ function loadAppData() {
     script.onerror = function() {
         clearTimeout(fetchTimeout);
         if (!cachedProducts || appProducts.length === 0) {
-            showEmptyProductsState("Unable to load menu. Check your connection or Apps Script URL.");
+            showEmptyProductsState("Connecting to server... Please check your network connection.");
         }
     };
 
@@ -146,14 +149,34 @@ function loadAppData() {
 }
 
 /**
- * Renders empty placeholder UI when backend returns no inventory.
+ * Animated UI Skeleton placeholder while cold-starting Google Apps Script.
+ */
+function showLoadingSkeleton() {
+    const container = document.getElementById('products-container');
+    if (container) {
+        container.innerHTML = `
+            <div class="p-4 bg-slate-800/80 rounded-2xl border border-slate-700/50 flex items-center justify-between animate-pulse">
+                <div class="flex items-center gap-3 w-full">
+                    <div class="w-12 h-12 rounded-xl bg-slate-700/60"></div>
+                    <div class="space-y-2 flex-1">
+                        <div class="h-3.5 bg-slate-700/60 rounded w-3/4"></div>
+                        <div class="h-2.5 bg-slate-700/40 rounded w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+/**
+ * User-friendly empty state without exposing developer backend messages.
  */
 function showEmptyProductsState(message) {
     const container = document.getElementById('products-container');
     if (container) {
         container.innerHTML = `
             <div class="p-6 text-center bg-slate-800/60 rounded-2xl border border-slate-700/60 my-4 shadow-inner">
-                <i class="fa-solid fa-droplet-slash text-3xl text-sky-400/50 mb-2"></i>
+                <i class="fa-solid fa-droplet text-2xl text-sky-400/50 mb-2"></i>
                 <p class="text-xs text-slate-300 font-medium">${message}</p>
             </div>
         `;
@@ -499,12 +522,12 @@ function showIOSInstallInstructions() {
     banner.className = 'fixed bottom-0 left-0 right-0 p-4 bg-slate-900/95 backdrop-blur-md border-t border-slate-700 text-white flex items-center justify-between z-50 shadow-2xl';
     banner.innerHTML = `
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center font-bold text-white animate-bounce">
-                <i class="fa-solid fa-arrow-down text-lg"></i>
+            <div class="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center font-bold text-white shadow-md">
+                <i class="fa-solid fa-share-nodes text-lg"></i>
             </div>
             <div>
                 <p class="text-xs font-bold">Install Aura H2Go App</p>
-                <p class="text-[10px] text-slate-300">Tap <strong class="text-sky-400">Share</strong> (icon below) then <strong class="text-sky-400">'Add to Home Screen'</strong></p>
+                <p class="text-[10px] text-slate-300">Tap <strong class="text-sky-400">Share / Menu</strong> option then select <strong class="text-sky-400">'Add to Home Screen'</strong></p>
             </div>
         </div>
         <button onclick="dismissInstall()" class="px-2 py-1.5 text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
